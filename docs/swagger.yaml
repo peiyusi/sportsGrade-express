@@ -1,0 +1,166 @@
+swagger: '2.0'
+info:
+  description: wc
+  version: 0.0.1
+  title: 体测查询
+host: '120.79.227.59:9421'
+basePath: /api/v1
+tags:
+  - name: student
+    description: 学生
+  - name: grades
+    description: 成绩
+  - name: subject
+    description: 科目
+  - name: authorization
+    description: 验证
+schemes:
+  - http
+paths:
+  '/student/{stuno}':
+    get:
+      tags:
+        - student
+      security:
+        - BearerAuth: []
+      summary: 通过学号获取学生信息
+      description: 返回学生信息
+      operationId: getStudentByNum
+      produces:
+        - application/json
+      parameters:
+        - name: stuno
+          in: path
+          description: 学号
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Student'
+        '403':
+          description: need token
+        '404':
+          description: Not Found
+        '500':
+          description: failure operation
+  '/grades/{stuno}':
+    get:
+      tags:
+        - grades
+      security:
+        - BearerAuth: []
+      summary: 通过学号返回体测成绩
+      description: 返回学生成绩
+      operationId: getGradeByNumber
+      produces:
+        - application/json
+      parameters:
+        - name: stuno
+          in: path
+          description: 学号
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Grade'
+        '403':
+          description: need token
+        '404':
+          description: Not Found
+        '500':
+          description: failure operation
+  /subject:
+    get:
+      tags:
+        - subject
+      security:
+        - BearerAuth: []
+      summary: '通过学号,科目返回相应成绩'
+      description: 返回单科成绩
+      operationId: getSubjectGradeByNumber
+      produces:
+        - application/json
+      parameters:
+        - name: stuno
+          in: query
+          description: 学号
+          required: true
+          type: string
+        - name: subject
+          in: query
+          description: 科目
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Grade'
+        '403':
+          description: need token
+        '404':
+          description: Not Found
+        '500':
+          description: failure operation
+  /authorization:
+    get:
+      tags: 
+        - authorization
+      summary: 获取JWT 
+      operationId: getJWT
+      responses:
+        200:
+          description: OK
+          schema: 
+            $ref: "#/definitions/JWT"
+securityDefinitions:
+  BearerAuth:
+    type: apiKey
+    name: Authorization
+    in: header
+definitions:
+  Student:
+    type: object
+    properties:
+      id:
+        type: integer
+      department:
+        type: string
+      class:
+        type: string
+      stuno:
+        type: string
+      name:
+        type: string
+      gender:
+        type: string
+  Grade:
+    type: object
+    properties:
+      id:
+        type: integer
+      type:
+        type: string
+      stuno:
+        type: string
+      grade:
+        type: integer
+      score:
+        type: integer
+      result:
+        type: string
+      semester:
+        type: integer
+  JWT:
+    type: object
+    properties:
+      msg:
+        type: string
+      token:
+        type: string
